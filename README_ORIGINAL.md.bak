@@ -1,0 +1,201 @@
+# Gmail CRM Agent
+
+Автоматический агент для обработки входящих писем Gmail, классификации лидов и обновления Google Sheets CRM.
+
+## Возможности
+
+- 🔍 Автоматическое сканирование входящих писем Gmail
+- 🤖 AI-классификация писем (лид vs спам) с помощью OpenAI
+- 📊 Извлечение контактной информации (имя, email, компания, телефон)
+- 📝 Генерация кратких заметок по переписке
+- 📈 Автоматическое обновление Google Sheets CRM
+- 🏷️ Маркировка писем метками (ai_lead, ai_skip, ai_error)
+- 💾 Отслеживание обработанных писем для избежания дублирования
+
+## Установка
+
+1. **Клонируйте репозиторий:**
+```bash
+git clone <repository-url>
+cd gmail-crm-agent
+```
+
+2. **Создайте виртуальное окружение:**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate  # На macOS/Linux
+# или
+.venv\Scripts\activate  # На Windows
+```
+
+3. **Установите зависимости:**
+```bash
+pip install -r requirements.txt
+```
+
+## Настройка
+
+### 1. Google Cloud Console
+
+1. Перейдите в [Google Cloud Console](https://console.cloud.google.com/)
+2. Создайте новый проект или выберите существующий
+3. Включите следующие API:
+   - Gmail API
+   - Google Sheets API
+4. Создайте OAuth 2.0 credentials:
+   - Перейдите в "APIs & Services" > "Credentials"
+   - Нажмите "Create Credentials" > "OAuth 2.0 Client IDs"
+   - Выберите "Desktop application"
+   - Скачайте JSON файл и переименуйте в `credentials.json`
+   - Поместите в корень проекта
+
+### 2. Google Sheets
+
+1. Создайте новую Google таблицу
+2. Скопируйте ID таблицы из URL (часть между `/d/` и `/edit`)
+3. Создайте лист с названием "Leads" (или другим по вашему выбору)
+
+### 3. OpenAI API
+
+1. Получите API ключ на [OpenAI Platform](https://platform.openai.com/api-keys)
+2. Скопируйте ключ
+
+### 4. Файл конфигурации
+
+Создайте файл `.env` в корне проекта:
+
+```env
+# OpenAI API Configuration
+OPENAI_API_KEY=your_openai_api_key_here
+
+# Gmail Configuration
+GMAIL_USER=your_email@gmail.com
+
+# Gmail search filter (basic - will be improved)
+EMAIL_FILTER=to:your_email@gmail.com -in:chats
+
+# Google Sheets Configuration
+SHEETS_SPREADSHEET_ID=your_google_sheets_id_here
+SHEETS_WORKSHEET_NAME=Leads
+
+# Google OAuth token path
+GOOGLE_TOKEN_PATH=token.json
+
+# Processing configuration
+MAX_THREADS=50
+```
+
+## Использование
+
+### Запуск агента
+
+```bash
+# Активируйте виртуальное окружение
+source .venv/bin/activate
+
+# Запустите агента
+python -m agents.main
+```
+
+При первом запуске:
+1. Откроется браузер для авторизации в Google
+2. Разрешите доступ к Gmail и Google Sheets
+3. Токен сохранится в `token.json`
+
+### Структура Google Sheets
+
+Агент автоматически создаст следующие столбцы:
+- `DateFirstSeen` - Дата первого появления лида
+- `Email` - Email адрес
+- `Name` - Имя контакта
+- `Company` - Компания
+- `Phone` - Телефон
+- `Language` - Язык переписки
+- `Country` - Страна
+- `Notes` - Краткие заметки по переписке
+- `LastThreadId` - ID последнего треда Gmail
+- `LastUpdated` - Дата последнего обновления
+
+## Архитектура
+
+```
+gmail-crm-agent/
+├── .env                    # Конфигурация
+├── credentials.json        # Google OAuth credentials
+├── token.json             # Google OAuth token (автогенерируется)
+├── requirements.txt       # Python зависимости
+├── agents/
+│   ├── __init__.py        # Bootstrap для импортов
+│   ├── main.py           # Главный entry point
+│   ├── gmail_client.py   # Gmail API клиент
+│   ├── sheets_client.py  # Google Sheets клиент
+│   ├── llm.py           # LLM обработка (OpenAI)
+│   ├── state_store.py   # Хранилище состояния
+│   └── utils.py         # Утилиты
+└── state/               # Папка для состояния
+    └── processed_threads.json
+```
+
+## Классификация писем
+
+### Отклоняются (is_lead=false):
+- Рассылки, промо-акции
+- Уведомления от платформ (Amazon, LinkedIn, etc.)
+- Автоответы (OOO, vacation)
+- Bounce сообщения
+- No-reply письма
+- Календарные приглашения
+- Биллинг/трекинг
+
+### Принимаются (is_lead=true):
+- Реальные бизнес-запросы
+- Вопросы о продуктах/услугах
+- Запросы на коммерческие предложения
+- Общение с поставщиками/клиентами
+- Партнерские предложения
+
+## Логирование
+
+Логи сохраняются в файл `gmail_crm_agent.log` в корне проекта.
+
+## Безопасность
+
+- `credentials.json` и `token.json` добавлены в `.gitignore`
+- API ключи не логируются
+- Используется OAuth 2.0 для безопасной авторизации
+
+## Troubleshooting
+
+### Ошибка "credentials.json not found"
+- Убедитесь, что файл `credentials.json` находится в корне проекта
+- Проверьте, что файл скачан из Google Cloud Console
+
+### Ошибка "No module named 'dotenv'"
+- Активируйте виртуальное окружение: `source .venv/bin/activate`
+- Установите зависимости: `pip install -r requirements.txt`
+
+### Ошибка авторизации Google
+- Удалите файл `token.json` и запустите заново
+- Убедитесь, что API включены в Google Cloud Console
+
+## Разработка
+
+### Добавление новых функций
+
+1. Создайте новый модуль в папке `agents/`
+2. Добавьте импорт в `agents/__init__.py`
+3. Обновите `main.py` для использования новой функциональности
+
+### Тестирование
+
+```bash
+# Проверка импортов
+python -c "import agents.main; print('OK')"
+
+# Запуск с отладкой
+python -m agents.main
+```
+
+## Лицензия
+
+MIT License

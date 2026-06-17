@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Google OAuth & API Credentials
+token.json
+credentials.json
+
+# Environment Variables
+.env
+.env.local
+
+# ChromaDB Vector Store
+chroma/
+*.db
+
+# Logs
+*.log
+gmail_crm_agent.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data (optional - keep processed.jsonl in git for history)
+# data/processed.jsonl
+
+# State
+state/*.json
+!state/.gitkeep

@@ -1,0 +1,6 @@
+You are working on a Python project that integrates Gmail API and Google Sheets.
+- Prefer clear, explicit functions over magic.
+- Always keep credentials.json and token.json out of Git (respect .gitignore).
+- Before writing code that uses Gmail, check token.json or explain how to auth.
+- Log important steps with 'rich' for clarity.
+- Keep main.py minimal; move API logic to gmail_client.py, sheets_client.py.

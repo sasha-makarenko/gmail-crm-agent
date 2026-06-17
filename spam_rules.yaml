@@ -1,0 +1,86 @@
+# Spam Rules Configuration for Gmail CRM Agent
+#
+# This file defines rules for filtering spam BEFORE LLM classification.
+# Rules are applied in order: allowlist -> denylist_emails -> denylist_domains -> denylist_regex
+#
+# IMPORTANT: Be conservative with denylist. Only add patterns that are clearly spam.
+
+# Allowlist: Emails/domains that should NEVER be marked as spam (highest priority)
+allowlist:
+  emails:
+    # Add trusted email addresses here
+    # Example: - "important-client@example.com"
+  domains:
+    # Add trusted domains here
+    # Example: - "important-partner.com"
+
+# Denylist: Emails that should be marked as spam (exact match)
+denylist_emails:
+  - "noreply@amazon.com"
+  - "noreply@linkedin.com"
+  - "noreply@facebook.com"
+  - "noreply@instagram.com"
+  - "noreply@twitter.com"
+  - "noreply@pinterest.com"
+  - "noreply@youtube.com"
+  - "no-reply@accounts.google.com"
+  - "mailer-daemon@googlemail.com"
+  - "postmaster@"
+
+# Denylist: Domains that should be marked as spam (substring match)
+denylist_domains:
+  - "linkedin.com"
+  - "facebook.com"
+  - "instagram.com"
+  - "twitter.com"
+  - "pinterest.com"
+  - "youtube.com"
+  - "netflix.com"
+  - "spotify.com"
+  - "uber.com"
+  - "lyft.com"
+  - "doordash.com"
+  - "grubhub.com"
+  - "amazonses.com"
+  - "sendgrid.net"
+  - "mailchimp.com"
+  - "mailgun.org"
+
+# Denylist: Regex patterns for subject/from/body matching
+denylist_regex:
+  # Automated messages
+  - pattern: "\\b(unsubscribe|opt-out|preferences)\\b"
+    case_insensitive: true
+    reason: "Newsletter/marketing"
+
+  # Automated system messages
+  - pattern: "\\b(auto-reply|automatic reply|out of office|ooo)\\b"
+    case_insensitive: true
+    reason: "Auto-reply"
+
+  # Delivery/bounce messages
+  - pattern: "\\b(delivery status notification|mail delivery failed|undeliverable)\\b"
+    case_insensitive: true
+    reason: "Delivery notification"
+
+  # Common spam patterns
+  - pattern: "\\b(congratulations you('ve| have) won|claim your prize|act now)\\b"
+    case_insensitive: true
+    reason: "Spam/scam"
+
+  # Job application automated responses (from company perspective)
+  - pattern: "\\b(thank you for your (application|interest)|we have received your resume)\\b"
+    case_insensitive: true
+    reason: "Automated job response"
+
+# Company-specific filters (emails FROM our company that should be skipped)
+company:
+  emails:
+    - "info@sweet-sdpearls.de"
+    - "hello.sdpearls@gmail.com"
+  domains:
+    - "sweet-sdpearls.de"
+  names:
+    - "SD Pearls"
+    - "Sweet SD Pearls"
+    - "Nataliia Makarenko"
