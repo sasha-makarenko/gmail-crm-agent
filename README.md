@@ -105,7 +105,7 @@ graph LR
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/gmail-crm-agent.git
+git clone https://github.com/sasha-makarenko/gmail-crm-agent.git
 cd gmail-crm-agent
 ```
 
@@ -357,9 +357,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📧 Contact
 
-Aleksandr Makarenko - [@yourusername](https://github.com/yourusername)
+Aleksandr Makarenko - [@sasha-makarenko](https://github.com/sasha-makarenko)
 
-Project Link: [https://github.com/yourusername/gmail-crm-agent](https://github.com/yourusername/gmail-crm-agent)
+Project Link: [https://github.com/sasha-makarenko/gmail-crm-agent](https://github.com/sasha-makarenko/gmail-crm-agent)
 
 ---
 
